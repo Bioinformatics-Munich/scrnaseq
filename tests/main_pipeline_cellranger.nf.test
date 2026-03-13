@@ -8,8 +8,9 @@ nextflow_pipeline {
         when {
             // the rest is taken from shared config
             params {
-                aligner    = 'cellranger'
-                outdir     = "$outputDir"
+                aligner      = 'cellranger'
+                aggregation  = true
+                outdir       = "$outputDir"
             }
         }
 
