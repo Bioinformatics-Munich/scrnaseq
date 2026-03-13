@@ -22,7 +22,7 @@ include { GTF_GENE_FILTER                                   } from '../modules/l
 include { GUNZIP as GUNZIP_FASTA                            } from '../modules/nf-core/gunzip/main'
 include { GUNZIP as GUNZIP_GTF                              } from '../modules/nf-core/gunzip/main'
 include { H5AD_CONVERSION                                   } from '../subworkflows/local/h5ad_conversion'
-include { CELL_AGGREGATION                                  } from '../subworkflows/local/cell_aggregation'
+include { CELLRANGER_AGGR                                   } from '../subworkflows/local/aggregation_cellranger'
 
 workflow SCRNASEQ {
 
@@ -193,7 +193,7 @@ workflow SCRNASEQ {
             meta, outs -> outs.findAll{ it -> it.name == "web_summary.html"}
         })
         // Generate aggregation CSV when aligner is cellranger and aggregation is true
-        CELL_AGGREGATION(
+        CELLRANGER_AGGR(
             params.aligner,
             CELLRANGER_ALIGN.out.cellranger_out,
             params.aggregation ?: false
@@ -283,7 +283,7 @@ workflow SCRNASEQ {
         ch_mtx_matrices = ch_mtx_matrices.mix( CELLRANGER_MULTI_ALIGN.out.cellrangermulti_mtx_raw, CELLRANGER_MULTI_ALIGN.out.cellrangermulti_mtx_filtered )
 
         // Generate aggregation CSV when aligner is cellrangermulti and aggregation is true
-        CELL_AGGREGATION(
+        CELLRANGER_AGGR(
             params.aligner,
             CELLRANGER_MULTI_ALIGN.out.cellrangermulti_out,
             params.aggregation ?: false

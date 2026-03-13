@@ -16,12 +16,10 @@ process PREPARE_AGGR_CSV {
     path("aggr_*.csv"), emit: csv
 
     script:
-    def mode = (aligner == "cellranger" && params.aggregation == true) ? "count_paths" :
-               (aligner == "cellrangermulti" && params.aggregation == true) ? "multi_paths" : null
-    if (mode == null) error "Alignment type ${aligner} not supported for aggregation"
+    if (aligner != "cellranger" && aligner != "cellrangermulti") error "Alignment type ${aligner} not supported for aggregation"
     def outdir_escaped = params.outdir.toString().replace("'", "'\"'\"'")
     def ids_escaped = sample_ids.collect { "'${it.replace("'", "'\"'\"'")}'" }.join(' ')
     """
-    python3 $projectDir/modules/local/templates/prepare_aggr_csv.py aggr_${aligner}.csv ${mode} '${outdir_escaped}' ${ids_escaped}
+    python3 $projectDir/modules/local/templates/prepare_aggr_csv.py aggr_${aligner}.csv ${aligner} '${outdir_escaped}' ${ids_escaped}
     """
 }
